@@ -1,0 +1,88 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"languageName":"csharp","name":"csharp"}]}}
+
+#!csharp
+
+public int ComputeGridValue(char[,] grid, char player)
+{
+    int scoreForTwoInRow = 10;
+    int scoreForThreeInRow = 100;
+    int scoreForFourInRow = 1000;
+    int totalGridValue = 0;
+
+    int rowCount = grid.GetLength(0);
+    int colCount = grid.GetLength(1);
+
+    // Directions : uniquement vers la droite, vers le bas, et diagonales pour pas compter double
+    int[,] directions = {
+        {0, 1},   // droite 
+        {1, 0},   // Bas
+        {1, 1},   //Diag en bas 
+        {1, -1}   // Diag en haut
+    };
+
+    for (int row = 0; row < rowCount; row++)
+    {
+        for (int col = 0; col < colCount; col++)
+        {
+            if (grid[row, col] != ' ')
+            {
+                for (int directionIndex = 0; directionIndex < directions.GetLength(0); directionIndex++)
+                {
+                    int rowDirection = directions[directionIndex, 0];
+                    int colDirection = directions[directionIndex, 1];
+
+                    int consecutiveCount = CountAlignedPawns(grid, row, col, rowDirection, colDirection, player);
+
+                    if (consecutiveCount == 2) totalGridValue += scoreForTwoInRow;
+                    if (consecutiveCount == 3) totalGridValue += scoreForThreeInRow;
+                    if (consecutiveCount == 4) totalGridValue += scoreForFourInRow;
+                }
+            }
+        }
+    }
+
+    return totalGridValue;
+}
+
+private int CountAlignedPawns(char[,] grid, int startRow, int startCol, int rowDirection, int colDirection, char player)
+{
+    int rowCount = grid.GetLength(0);
+    int colCount = grid.GetLength(1);
+    int alignedCount = 0;
+
+    for (int step = 0; step < 4; step++) 
+    {
+        int newRow = startRow + step * rowDirection;
+        int newCol = startCol + step * colDirection;
+
+        if (newRow >= 0 && newRow < rowCount && newCol >= 0 && newCol < colCount)
+        {
+            if (grid[newRow, newCol] == player)
+                alignedCount++;
+            else
+                break; 
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return alignedCount;
+}
+
+char[,] grid = new char[6, 7]
+{
+    { ' ', 'X', 'O', 'O', 'X', ' ', ' ' }, 
+    { ' ', ' ', 'X', 'X', 'O', ' ', ' ' }, 
+    { ' ', ' ', ' ', 'O', ' ', ' ', ' ' }, 
+    { ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, 
+    { ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+    { ' ', ' ', ' ', ' ', ' ', ' ', ' ' } 
+};
+
+var value = ComputeGridValue(grid, 'X');
+
+Console.WriteLine($"Value = {value}"); // Output attendu: 30
