@@ -48,8 +48,8 @@ public int ComputeGridValue(char[,] grid, char player)
 
 private int CountAlignedPawns(char[,] grid, int startRow, int startCol, int rowDirection, int colDirection, char player)
 {
-    int rowCount = grid.GetLength(0);
-    int colCount = grid.GetLength(1);
+    int nbRows = grid.GetLength(0);
+    int nbColumns = grid.GetLength(1);
     int alignedCount = 0;
 
     for (int step = 0; step < 4; step++) 
@@ -57,7 +57,7 @@ private int CountAlignedPawns(char[,] grid, int startRow, int startCol, int rowD
         int newRow = startRow + step * rowDirection;
         int newCol = startCol + step * colDirection;
 
-        if (newRow >= 0 && newRow < rowCount && newCol >= 0 && newCol < colCount)
+        if (newRow >= 0 && newRow < nbRows && newCol >= 0 && newCol < nbColumns)
         {
             if (grid[newRow, newCol] == player)
                 alignedCount++;
